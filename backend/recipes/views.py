@@ -66,6 +66,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeSafeSerializer
         return RecipeFullSerializer
 
+    @staticmethod
+    def __serializer_code(serializers, request, recipe_id):
+        serializer = serializers(
+            data={'recipe': recipe_id, 'user': request.user.id},
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        serializer = FavoriteShoppingReturnSerializer()
+        return serializer
+
     @action(
         detail=False,
         methods=['post', 'delete'],
@@ -74,17 +85,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def favorite(self, request, recipe_id):
         if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=recipe_id)
-            serializer = FavoriteWriteSerializer(
-                data={'recipe': recipe_id, 'user': request.user.id},
-                context={'request': request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            serializer = self.__serializer_code(FavoriteWriteSerializer, request, recipe_id)
 
-            serializer = FavoriteShoppingReturnSerializer()
             return Response(
-                serializer.to_representation(instance=recipe),
+                serializer.to_representation(instance=get_object_or_404(Recipe, id=recipe_id)),
                 status=status.HTTP_201_CREATED
             )
         user = request.user
@@ -102,17 +106,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def shopping(self, request, recipe_id):
         if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=recipe_id)
-            serializer = ShoppingListWriteSerializer(
-                data={'recipe': recipe_id, 'user': request.user.id},
-                context={'request': request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            serializer = self.__serializer_code(ShoppingListWriteSerializer, request, recipe_id)
 
-            serializer = FavoriteShoppingReturnSerializer()
             return Response(
-                serializer.to_representation(instance=recipe),
+                serializer.to_representation(instance=get_object_or_404(Recipe, id=recipe_id)),
                 status=status.HTTP_201_CREATED
             )
         user = request.user

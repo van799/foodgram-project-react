@@ -3,7 +3,6 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from users.models import User
 from users.serializers import UserSerializer
-
 from .fields import Base64ImageField
 from .models import (
     Favorite,
@@ -80,8 +79,10 @@ class RecipeSafeSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.SerializerMethodField(
         method_name='get_is_in_shopping_cart'
     )
-    ingredients = serializers.SerializerMethodField(
-        method_name='get_ingredients'
+    ingredients = IngredientAmountSerializer(
+        source='ingredientamount_set',
+        many=True,
+        read_only=True,
     )
 
     class Meta:
@@ -102,20 +103,16 @@ class RecipeSafeSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, recipe):
         user = self.context['request'].user
         return (
-            user.is_authenticated
-            and Favorite.objects.filter(recipe=recipe, user=user).exists()
+                user.is_authenticated
+                and Favorite.objects.filter(recipe=recipe, user=user).exists()
         )
 
     def get_is_in_shopping_cart(self, recipe):
         user = self.context['request'].user
         return (
-            user.is_authenticated
-            and ShoppingList.objects.filter(recipe=recipe, user=user).exists()
+                user.is_authenticated
+                and ShoppingList.objects.filter(recipe=recipe, user=user).exists()
         )
-
-    def get_ingredients(self, recipe):
-        queryset = recipe.recipes_ingredients_list.all()
-        return IngredientAmountSerializer(queryset, many=True).data
 
 
 class RecipeFullSerializer(serializers.ModelSerializer):
@@ -165,34 +162,22 @@ class RecipeFullSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, recipe, validated_data):
-        # Делаем селекцию данных
-        ingredients_data = validated_data.pop('ingredients')
-        tags_data = validated_data.pop('tags')
-
-        # Удаляем старые объекты
-        IngredientAmount.objects.filter(recipe=recipe).delete()
-        # Создаем новые объекты
-        self.__ingredient_amount_bulk_create(recipe, ingredients_data)
-
-        recipe.name = validated_data.pop('name')
-        recipe.text = validated_data.pop('text')
-        recipe.cooking_time = validated_data.pop('cooking_time')
-
-        if validated_data.get('image'):
-            recipe.image = validated_data.pop('image')
-
-        recipe.save()
-        recipe.tags.set(tags_data)
-        return recipe
+        if 'ingredients' in validated_data:
+            ingredients = validated_data.pop('ingredients')
+            recipe.ingredients.clear()
+            self.create_ingredients(ingredients, recipe)
+        if 'tags' in validated_data:
+            recipe.tags.set(
+                validated_data.pop('tags'))
+        return super().update(
+            recipe, validated_data)
 
     def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
+        ingredients = data['ingredients']
         for ingredient in ingredients:
             if int(ingredient['amount']) <= 0:
                 raise serializers.ValidationError({
-                    'ingredients': (
-                        'Убедитесь, что это значение больше 0.'
-                    )
+                    'amount': 'Убедитесь, что это значение больше 0.'
                 })
         return data
 

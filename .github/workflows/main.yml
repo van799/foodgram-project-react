@@ -62,10 +62,6 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-<<<<<<< HEAD
-=======
-          #stack_file_name: docker-compose.yaml
->>>>>>> 0fcc8227d817cc526e8ae2e47f5e647531c4f848
           script: |
             sudo docker pull van79/backend:latest
             sudo docker pull van79/frontend:latest

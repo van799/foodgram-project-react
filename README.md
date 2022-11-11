@@ -1,15 +1,13 @@
 <<<<<<< HEAD
 
 ## Адрес продуктового помошника: 
-http://178.154.224.128
+http://158.160.34.31
 ## Установка:
-=======
-## Адресс проекта 
 http://158.160.34.31
 ## Установка!!!
->>>>>>> 0fcc8227d817cc526e8ae2e47f5e647531c4f848
-Для запуска локально, создайте файл `.env` в директории `/backend/` с содержанием:
+
 ```
+Для запуска локально, создайте файл `.env` в директории `/backend/` с содержанием:
 SECRET_KEY=любой_секретный_ключ_на_ваш_выбор
 DEBUG=False
 ALLOWED_HOSTS=*,или,ваши,хосты,через,запятые,без,пробелов
@@ -25,7 +23,7 @@ DB_PORT=5432
 Для запуска проекта вам потребуется установить Docker и docker-compose.
 
 Для установки на ubuntu выполните следующие команды:
-```bash
+```
 sudo apt install docker docker-compose
 ```
 
@@ -64,19 +62,18 @@ sudo apt install docker-compose
 sudo docker-compose up -d --build
 sudo docker-compose exec backend python manage.py migrate
 ```
+
 5. Создайте суперюзера и соберите статику:
 ```
 sudo docker-compose exec backend python manage.py createsuperuser
 sudo docker-compose exec backend python manage.py collectstatic --no-input
 ```
-6. Скопируйте предустановленные данные json:
+6. Выгрузить данные из БД для сохранения:
 ```
-sudo docker-compose exec backend python manage.py loadmodels --path 'recipes/data/ingredients.json'
-sudo docker-compose exec backend python manage.py loadmodels --path 'recipes/data/tags.json'
-<<<<<<< HEAD
+docker-compose exec backend python manage.py dumpdata > init_database.json
+```
+Загрузить сохраненные данные для инициализации БД:
+```
+sudo docker-compose exec backend python manage.py loaddata init_database.json
 ```
 ## Проект запущен
-
-=======
-```
->>>>>>> 0fcc8227d817cc526e8ae2e47f5e647531c4f848

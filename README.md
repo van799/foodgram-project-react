@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 
 ## Адрес продуктового помошника: 
 http://178.154.224.128
 ## Установка:
+=======
+## Адресс проекта 
+http://158.160.34.31
+## Установка!!!
+>>>>>>> 0fcc8227d817cc526e8ae2e47f5e647531c4f848
 Для запуска локально, создайте файл `.env` в директории `/backend/` с содержанием:
 ```
 SECRET_KEY=любой_секретный_ключ_на_ваш_выбор
@@ -67,6 +73,10 @@ sudo docker-compose exec backend python manage.py collectstatic --no-input
 ```
 sudo docker-compose exec backend python manage.py loadmodels --path 'recipes/data/ingredients.json'
 sudo docker-compose exec backend python manage.py loadmodels --path 'recipes/data/tags.json'
+<<<<<<< HEAD
 ```
 ## Проект запущен
 
+=======
+```
+>>>>>>> 0fcc8227d817cc526e8ae2e47f5e647531c4f848

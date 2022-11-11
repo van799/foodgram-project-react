@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    # 'corsheaders',  # для тестирования локально
     'rest_framework.authtoken',
     'django_filters',
     'recipes',
@@ -40,12 +41,17 @@ DJOSER = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',  # для тестирования локально
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# для тестирования
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'foodgram.urls'
 
@@ -68,24 +74,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': os.getenv('DB_ENGINE',
-#                             default="django.db.backends.postgresql"),
-#         'NAME': os.getenv('DB_NAME', default="postgres"),
-#         'USER': os.getenv('POSTGRES_USER', default="postgres"),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', default="postgres"),
-#         'HOST': os.getenv('DB_HOST', default="localhost"),
-#         'PORT': os.getenv('DB_PORT', default="5432")
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv('DB_ENGINE',
+                            default="django.db.backends.postgresql"),
+        'NAME': os.getenv('DB_NAME', default="postgres"),
+        'USER': os.getenv('POSTGRES_USER', default="postgres"),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default="postgres"),
+        'HOST': os.getenv('DB_HOST', default="localhost"),
+        'PORT': os.getenv('DB_PORT', default="5432")
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

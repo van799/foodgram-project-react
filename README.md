@@ -76,4 +76,4 @@ docker-compose exec backend python manage.py dumpdata > init_database.json
 ```
 sudo docker-compose exec backend python manage.py loaddata init_database.json
 ```
-## Проект запущен
+## Проект запущен!

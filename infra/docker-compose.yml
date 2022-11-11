@@ -10,8 +10,8 @@ services:
   backend:
     image: van79/backend:latest
     volumes:
-      - ../static/:/app/static/
-      - ../media/:/app/media/
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
     env_file:

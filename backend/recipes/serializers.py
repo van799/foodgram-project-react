@@ -80,9 +80,8 @@ class RecipeSafeSerializer(serializers.ModelSerializer):
         method_name='get_is_in_shopping_cart'
     )
     ingredients = IngredientAmountSerializer(
-        source='ingredientamount_set',
         many=True,
-        read_only=True,
+        source='recipes_ingredients_list'
     )
 
     class Meta:
@@ -165,7 +164,7 @@ class RecipeFullSerializer(serializers.ModelSerializer):
         if 'ingredients' in validated_data:
             ingredients = validated_data.pop('ingredients')
             recipe.ingredients.clear()
-            self.create_ingredients(ingredients, recipe)
+            self.__ingredient_amount_bulk_create(recipe, ingredients)
         if 'tags' in validated_data:
             recipe.tags.set(
                 validated_data.pop('tags'))

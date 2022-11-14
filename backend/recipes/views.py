@@ -3,7 +3,6 @@ from django.shortcuts import HttpResponse, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -58,8 +57,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = RecipeFilter
-
-    pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:

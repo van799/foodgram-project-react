@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
@@ -173,7 +174,17 @@ class RecipeFullSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         ingredients = data['ingredients']
+        ingredients_set = set()
+        if not ingredients:
+            raise serializers.ValidationError({
+                'ingredients': 'Нужен хоть один ингридиент для рецепта'})
         for ingredient in ingredients:
+            id = ingredient.get('id')
+            if id in ingredients_set:
+                raise serializers.ValidationError(
+                    'Ингредиент в рецепте повторяются.'
+                )
+            ingredients_set.add(id)
             if int(ingredient['amount']) <= 0:
                 raise serializers.ValidationError({
                     'amount': 'Убедитесь, что это значение больше 0.'
